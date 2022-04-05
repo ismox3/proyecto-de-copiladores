@@ -1,5 +1,6 @@
 package Principal;
 import java.awt.EventQueue;
+import java.awt.FileDialog;
 
 import javax.swing.JFrame;
 import java.awt.Panel;
@@ -15,11 +16,13 @@ import java.awt.Container;
 
 import javax.swing.JTable;
 import java.awt.event.ActionListener;
+import java.awt.geom.Area;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
 import java.awt.Label;
 import javax.swing.JLabel;
@@ -30,10 +33,15 @@ import javax.swing.JOptionPane;
 import java.awt.Color;
 
 import javax.swing.JTextArea;
+import javax.swing.Spring;
 
  
 
 public class Principal extends JPanel {
+	File file;
+	lexico le= new lexico();
+	String frase="";
+	
 	
 	private JFrame frame;
 	
@@ -46,13 +54,14 @@ public class Principal extends JPanel {
 				try {
 					Principal window = new Principal();
 					window.frame.setVisible(true);
+					window.frame.setTitle("Proyecto Compiladores");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
 	}
-
+	
 	/**
 	 * Create the application.
 	 */
@@ -61,13 +70,18 @@ public class Principal extends JPanel {
 		initialize();
 		
 	}
+	
+			   
+			 
+
+
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 617, 489);
+		frame.setBounds(100, 100, 754, 698);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JPanel jpanel = new JPanel();
@@ -76,19 +90,19 @@ public class Principal extends JPanel {
 		
 		JPanel content = new JPanel();
 		content.setBackground(Color.WHITE);
-		content.setBounds(10, 96, 583, 356);
+		content.setBounds(10, 96, 720, 561);
 		jpanel.add(content);
 		content.setLayout(null);
 		
 		JTextArea Area_de_trabajo = new JTextArea();
-		Area_de_trabajo.setBounds(0, 0, 583, 356);
+		Area_de_trabajo.setBounds(0, 0, 720, 561);
 		content.add(Area_de_trabajo);
 		
 		JButton btnNewButton = new JButton("Lexico");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				lexico le= new lexico();
-				le.setSize(1178, 601);
+				
+				le.setSize(720, 561);
 				le.setLocation(0, 0);
 			
 				content.removeAll();
@@ -104,7 +118,7 @@ public class Principal extends JPanel {
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Sintactico si= new Sintactico();
-				si.setSize(1178, 601);
+				si.setSize(720, 561);
 				si.setLocation(0, 0);
 			
 				content.removeAll();
@@ -120,7 +134,7 @@ public class Principal extends JPanel {
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				Area_de_trabajo.setSize(583, 356);
+				Area_de_trabajo.setSize(720, 561);
 				Area_de_trabajo.setLocation(0, 0);
 			
 				content.removeAll();
@@ -133,39 +147,51 @@ public class Principal extends JPanel {
 		jpanel.add(btnNewButton_2);
 		
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 593, 22);
+		menuBar.setBounds(0, 0, 740, 22);
 		jpanel.add(menuBar);
 		
 		JMenu mnNewMenu = new JMenu("Archivo");
 		menuBar.add(mnNewMenu);
 		
-		JMenuItem mntmNewMenuItem = new JMenuItem("Guardar");
+		JMenuItem mntmNewMenuItem = new JMenuItem("Guardar como");
 		mntmNewMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				file = null;
+				FileDialog savedia;
+
+			
+			
+			savedia = new FileDialog (frame, "Guardar", FileDialog.SAVE);
+			    frame.setVisible(true);
+			    
+			
+			
+				if(file==null){
+			        savedia.setVisible(true);
+			        String dirPath=savedia.getDirectory();
+			        String fileName=savedia.getFile();
+			        if(dirPath==null||fileName==null)
+			            return ;
+			        file=new File(dirPath,fileName);
+			        try{
+			            BufferedWriter bfwt=new BufferedWriter(new FileWriter(file));
+			            String t= Area_de_trabajo.getText();
+			            bfwt.write(t);
+			            bfwt.close();
+			            Area_de_trabajo.setText("");
+			        }
+			        catch (IOException ex){
+			            throw new RuntimeException();
+			        }
+			        file = null;
+			}
 				
-				try {
-					
-					FileWriter archivo = new FileWriter("Guardado.txt",true);
-		        
-		        try(BufferedWriter bw = new BufferedWriter(archivo)){
-		       
-		        	JOptionPane.showMessageDialog(null,"Se ha guardado con exito");
-		            
-		        
 				
-						
-						bw.write(Area_de_trabajo.getText() );
-						bw.newLine();
-					
-						Area_de_trabajo.setText("");
-		          
-		           
-		        
-		        }
-		        archivo.close();
-				}
-		        catch(Exception ex) {}
+				
+				
+				
+				
 			
 			}
 			
@@ -173,29 +199,136 @@ public class Principal extends JPanel {
 				
 			
 		});
+		
+		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Guardar");
+		mntmNewMenuItem_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(file==null) {
+					
+				}
+				else {
+					
+				
+				try{
+		            BufferedWriter bfwt=new BufferedWriter(new FileWriter(file));
+		            String t= Area_de_trabajo.getText();
+		            bfwt.write(t);
+		            bfwt.close();
+		            Area_de_trabajo.setText("");
+		        }
+		        catch (IOException ex){
+		            throw new RuntimeException();
+		        }
+				}
+			}
+		});
+		mnNewMenu.add(mntmNewMenuItem_2);
 		mnNewMenu.add(mntmNewMenuItem);
 		
 		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Abrir");
 		mntmNewMenuItem_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					
-					FileReader archivo = new FileReader("Guardado.txt");
-					BufferedReader br = new BufferedReader(archivo);
-					
-					Area_de_trabajo.setText(br.readLine());
-					
-					
 				
-					archivo.close();
-				}catch(Exception e1) {}
+				if(Area_de_trabajo.isDisplayable()) {
+					file = null;
+					FileDialog opendia;
+
 				
-				try {
-					File archivo= new File ("Guardado.txt");
-				archivo.delete();
+				
+				opendia = new FileDialog (frame, "abrir", FileDialog.LOAD);
+				    frame.setVisible(true);
+				    
+				
+				
+					if(file==null){
+				        opendia.setVisible(true);
+				        String dirPath=opendia.getDirectory();
+				        String fileName=opendia.getFile();
+				        
+				        file=new File(dirPath,fileName);
+				        try{
+				            BufferedReader bfwt=new BufferedReader(new FileReader(file));
+				            String texto="";
+				            String linea;
+				            do {
+					        	   linea=bfwt.readLine();
+					            	if (linea == null) {
+					            		
+					            	}
+					            	else {
+					            	
+									texto+=linea+"\n";
+					            	}
+								} while( linea != null );
+				            Area_de_trabajo.setText(texto);
+				        }
+				        catch (IOException ex){
+				            throw new RuntimeException();
+				        }
+				}
 				}
 				
-				catch(Exception e1) {}
+				else if(le.isDisplayable()) {
+					file = null;
+					frase="";
+					FileDialog opendia;
+
+				
+				
+				opendia = new FileDialog (frame, "abrir", FileDialog.LOAD);
+				    frame.setVisible(true);
+				    
+				
+				
+					if(file==null){
+				        opendia.setVisible(true);
+				        String dirPath=opendia.getDirectory();
+				        String fileName=opendia.getFile();
+				        
+				        file=new File(dirPath,fileName);
+				        try{
+				            BufferedReader bfwt=new BufferedReader(new FileReader(file));
+				           String linea;
+				           String[] frase2 = new String[10];
+				           int contlinea=0;
+				           int x;
+				            x=0;
+				           do {
+				        	   linea=bfwt.readLine();
+				            	if (linea == null) {
+				            		
+				            	}
+				            	else {
+				            	frase2[x]=linea;
+								frase+=linea;
+								
+								
+								contlinea++;
+								x++;
+							    
+				            	}
+							} while( linea != null );
+				      
+				                le.sinespacios(frase);
+				                le.contadores(frase,contlinea);
+				                le.sincomentarios(frase2,x);
+				                le.comentarios(frase2, x);
+				           
+				            
+				            
+				            
+				        }
+				        catch (IOException ex){
+				            throw new RuntimeException();
+				        }
+				}
+					
+				}
+				
+				
+				
+				
+				
 			}
 		});
 		mnNewMenu.add(mntmNewMenuItem_1);
@@ -204,3 +337,5 @@ public class Principal extends JPanel {
 		
 	}
 }
+
+
